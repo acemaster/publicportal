@@ -4,7 +4,7 @@
 {% verbatim %}
 <div ng-app="ChatBot" style="height: 100%;" >
 <div ng-controller="ChatScreen as Chat" style="height: 100%;">
-<div class="row" style="height: 90%;">
+<div class="row" id="Chatwindow" style="height: 90%; overflow-y:auto">
 	<div class="col-sm-11 col-sm-offset-1">
 	
 		<div class="row bubble-left" ng-repeat="chat in chats">

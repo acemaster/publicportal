@@ -22,3 +22,16 @@ class Mapobject(models.Model):
 	location = models.CharField(max_length = 100)
 	latitude = models.CharField(max_length = 30)
 	longitude = models.CharField(max_length = 30)
+
+class IncompleteComplaint(models.Model):
+	id=models.AutoField(primary_key=True)
+	title= models.CharField(max_length=100, null=True)
+	type=models.CharField(max_length=10, null=True)
+	description=models.TextField(null=True)
+	userid=models.IntegerField(null=True)
+	location = models.CharField(max_length = 100, null=True)
+	latitude = models.CharField(max_length = 30, null=True)
+	longitude = models.CharField(max_length = 30, null=True)
+	# rating = models.FloatField()
+	def __unicode__(self):
+		return self.title

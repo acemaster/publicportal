@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     url(r'^drivenav/index/','drivenav.views.index'),
     url(r'^drivenav/issues/','drivenav.views.issues'),
     url(r'^drivenav/route/(?P<issue_id>\d+)/$','drivenav.views.route',name = 'route'),
-    url(r'^drivenav/testjson/','drivenav.views.test'),
+    # url(r'^drivenav/testjson/','drivenav.views.test'),
     url(r'^chat/bot/','foundation.views.chatbot'),
     url(r'^livechatbot','foundation.views.livechatbot'),
 )

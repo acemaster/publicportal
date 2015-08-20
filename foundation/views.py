@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from django.http import Http404,HttpResponseRedirect,HttpResponse
-from foundation.models import Mapobject,Complaint
+from foundation.models import Mapobject,Complaint,IncompleteComplaint
 from django.contrib import messages
 from django.contrib.auth.models import User,AnonymousUser
 import json
 import nude
+from foundation.chatbot import *
 
 # Create your views here.
 def render_to_json(request, data):
@@ -77,9 +78,38 @@ def chatbot(request):
 def livechatbot(request):
 	new_msg='Checking'
 	if request.method == 'POST':
+		new_msg=""
 		response_data = {}
-		new_msg=request.POST.get('content')
-		new_msg=new_msg+" Modifed ......"
+		rec_msg=request.POST.get('content')
+		state=int(request.POST.get('state_flag'))
+		mode=int(request.POST.get('mode'))
+		complaint_id=int(request.POST.get('complaint_id'))
+		msg_content=rec_msg.split(',')
+		print msg_content
+		print state
+		hello()
+		if len(msg_content) != 3 and state == 0:
+			print "Entered 1"
+			new_msg="Parameter missing please message in <name,location,type> format..."
+		elif len(msg_content) == 3 and state == 0:
+			print "Entered 2"
+			new_msg="Parameters Recived Name: "+msg_content[0]+" Location: "+msg_content[1]+" Type: "+msg_content[2]+""
+			complaint_obj=Complaint.objects.filter(title = msg_content[0],location=msg_content[1],type=msg_content[2])
+			if len(complaint_obj) == 0:
+				complaint=IncompleteComplaint(title=msg_content[0],location=msg_content[1],type=msg_content[2])
+				complaint.save()
+				new_msg+="Referral code: "+str(complaint.id)
+				complaint_id=complaint.id
+				state=1
+			else:
+				complaint_obj.difficulty=complaint_obj.difficulty+1
+				complaint_obj.save()
+				state=5
+		if state > 0:
+			new_msg,state,mode=chatanswer(rec_msg,new_msg,state,mode,complaint_id)
 		response_data['message'] = new_msg
 		response_data['uid'] = 0
+		response_data['state']=state
+		response_data['mode']=mode
+		response_data['complaint_id']=complaint_id
 	return HttpResponse(json.dumps(response_data), content_type="application/json")
